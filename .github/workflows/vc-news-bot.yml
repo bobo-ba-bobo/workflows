@@ -23,10 +23,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install feedparser requests
+          pip install feedparser requests anthropic
 
       - name: Run VC news bot
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.VC_NEWS_DISCORD_WEBHOOK_URL }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
         run: |
           python vc-news-discord.py

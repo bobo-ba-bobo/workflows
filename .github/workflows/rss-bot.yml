@@ -23,10 +23,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install feedparser requests
+          pip install feedparser requests anthropic
 
       - name: Run RSS bot
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
         run: |
           python tech-news-discord.py

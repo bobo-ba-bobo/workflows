@@ -10,9 +10,11 @@ import feedparser
 import requests
 from datetime import datetime, timedelta
 import time
+from anthropic import Anthropic
 
 # Discord Webhook URL from environment variable
 DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
+CLAUDE_API_KEY = os.environ.get('CLAUDE_API_KEY')
 
 # RSS Feeds to monitor
 FEEDS = [
@@ -32,6 +34,35 @@ FEEDS = [
         'emoji': '🚀'
     }
 ]
+
+def generate_summary(title, description):
+    """Generate 3-line summary using Claude API"""
+    if not CLAUDE_API_KEY:
+        return ""
+
+    try:
+        client = Anthropic(api_key=CLAUDE_API_KEY)
+
+        prompt = f"""다음 기사를 한국어로 정확히 3줄로 요약해주세요. 각 줄은 한 문장으로.
+
+제목: {title}
+내용: {description[:500]}
+
+형식:
+• [첫 번째 핵심 내용]
+• [두 번째 핵심 내용]
+• [세 번째 핵심 내용]"""
+
+        message = client.messages.create(
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=200,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        return message.content[0].text.strip()
+    except Exception as e:
+        print(f"⚠️ Summary generation failed: {e}")
+        return ""
 
 def send_to_discord(message):
     """Send message to Discord via webhook"""
@@ -85,8 +116,15 @@ def fetch_feed(feed_config):
             if is_recent(entry, hours=3):
                 title = entry.get('title', 'No title')
                 link = entry.get('link', '')
+                description = entry.get('summary', '') or entry.get('description', '')
 
-                message = f"{feed_config['emoji']} **{feed_config['name']}** | {title}\n{link}"
+                # Generate summary
+                summary = generate_summary(title, description)
+
+                message = f"{feed_config['emoji']} **{feed_config['name']}** | {title}\n"
+                if summary:
+                    message += f"{summary}\n"
+                message += f"{link}"
                 new_items.append(message)
 
         print(f"Found {len(new_items)} recent items")
