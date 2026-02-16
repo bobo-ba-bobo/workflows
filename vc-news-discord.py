@@ -17,14 +17,9 @@ DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
 # RSS Feeds to monitor - VC focused
 FEEDS = [
     {
-        'url': 'https://wowtale.net/feed',
-        'name': '와우테일',
-        'emoji': '🇰🇷'
-    },
-    {
         'url': 'https://platum.kr/feed',
         'name': '플래텀',
-        'emoji': '📰'
+        'emoji': '🇰🇷'
     },
     {
         'url': 'https://rss.buzzsprout.com/850276.rss',
@@ -65,7 +60,7 @@ def send_to_discord(message):
         print(f"❌ Error sending to Discord: {e}")
         return False
 
-def is_recent(entry, hours=3):
+def is_recent(entry, hours=24):
     """Check if entry was published within the last N hours"""
     try:
         # Try different date fields
@@ -92,7 +87,7 @@ def fetch_feed(feed_config):
 
         new_items = []
         for entry in feed.entries[:10]:  # Only check latest 10 items
-            if is_recent(entry, hours=3):
+            if is_recent(entry, hours=24):
                 title = entry.get('title', 'No title')
                 link = entry.get('link', '')
 
