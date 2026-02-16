@@ -1,0 +1,46 @@
+name: Podcast to Discord Bot
+
+on:
+  schedule:
+    # Run once daily at 9 AM UTC (6 PM KST)
+    - cron: '0 9 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  fetch-podcasts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install feedparser requests anthropic
+
+      - name: Run podcast bot
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.PODCAST_DISCORD_WEBHOOK_URL }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+        run: |
+          python podcasts-discord.py
+
+      - name: Commit updated seen episodes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add seen_episodes.json
+          git diff --staged --quiet || git commit -m "Update seen episodes [skip ci]"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

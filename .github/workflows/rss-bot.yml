@@ -1,4 +1,4 @@
-name: RSS to Discord Bot
+name: Tech News to Discord Bot
 
 on:
   schedule:
@@ -29,4 +29,4 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          python rss_discord.py
+          python tech-news-discord.py
