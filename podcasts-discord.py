@@ -15,6 +15,7 @@ from anthropic import Anthropic
 # Configuration
 DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
 CLAUDE_API_KEY = os.environ.get('CLAUDE_API_KEY')
+DRY_RUN = os.environ.get('DRY_RUN', 'false').lower() == 'true'
 SEEN_EPISODES_FILE = 'seen_episodes.json'
 
 # Podcasts to monitor
@@ -93,6 +94,13 @@ Format everything with bullet points, be specific and detailed. Write in Korean.
 
 def send_to_discord(content):
     """Send message to Discord via webhook"""
+    if DRY_RUN:
+        print("🧪 DRY RUN - Would send to Discord:")
+        print("-" * 50)
+        print(content[:500] + "..." if len(content) > 500 else content)
+        print("-" * 50)
+        return True
+
     if not DISCORD_WEBHOOK_URL:
         print("❌ DISCORD_WEBHOOK_URL not set")
         return False
@@ -196,9 +204,11 @@ def main():
     print("=" * 60)
     print("🎙️ Podcast to Discord Bot Starting...")
     print(f"⏰ Time: {datetime.utcnow().isoformat()}")
+    if DRY_RUN:
+        print("🧪 DRY RUN MODE - Will NOT send to Discord")
     print("=" * 60)
 
-    if not DISCORD_WEBHOOK_URL:
+    if not DISCORD_WEBHOOK_URL and not DRY_RUN:
         print("❌ DISCORD_WEBHOOK_URL not set!")
         sys.exit(1)
 

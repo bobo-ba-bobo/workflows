@@ -34,15 +34,3 @@ jobs:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
         run: |
           python podcasts-discord.py
-
-      - name: Commit and push updated seen episodes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add seen_episodes.json
-          if ! git diff --staged --quiet; then
-            git commit -m "Update seen episodes [skip ci]"
-            git push
-          else
-            echo "No changes to commit"
-          fi
