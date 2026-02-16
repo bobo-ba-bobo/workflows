@@ -1,4 +1,4 @@
-name: Tech News to Discord Bot
+name: VC News to Discord Bot
 
 on:
   schedule:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  fetch-rss:
+  fetch-vc-news:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,8 +25,8 @@ jobs:
         run: |
           pip install feedparser requests
 
-      - name: Run RSS bot
+      - name: Run VC news bot
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.VC_NEWS_DISCORD_WEBHOOK_URL }}
         run: |
-          python tech-news-discord.py
+          python vc-news-discord.py

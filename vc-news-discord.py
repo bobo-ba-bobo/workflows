@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-RSS to Discord Bot
-Fetches RSS feeds and posts new items to Discord
+VC News to Discord Bot
+Fetches VC-related RSS feeds and posts to Discord
 """
 
 import os
@@ -14,21 +14,31 @@ import time
 # Discord Webhook URL from environment variable
 DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
 
-# RSS Feeds to monitor
+# RSS Feeds to monitor - VC focused
 FEEDS = [
     {
-        'url': 'https://hnrss.org/frontpage?points=300',
-        'name': '🔥 HN',
-        'emoji': '🔥'
+        'url': 'https://wowtale.net/feed',
+        'name': '와우테일',
+        'emoji': '🇰🇷'
     },
     {
-        'url': 'https://techcrunch.com/feed/',
-        'name': '📰 TC',
+        'url': 'https://platum.kr/feed',
+        'name': '플래텀',
         'emoji': '📰'
     },
     {
-        'url': 'https://www.producthunt.com/feed',
-        'name': '🚀 PH',
+        'url': 'https://rss.buzzsprout.com/850276.rss',
+        'name': 'StrictlyVC',
+        'emoji': '💼'
+    },
+    {
+        'url': 'https://techcrunch.com/tag/venture-capital/feed/',
+        'name': 'TC: VC',
+        'emoji': '💰'
+    },
+    {
+        'url': 'https://feeds.feedburner.com/venturebeat/SZYF',
+        'name': 'VentureBeat',
         'emoji': '🚀'
     }
 ]
@@ -99,7 +109,7 @@ def fetch_feed(feed_config):
 def main():
     """Main function"""
     print("=" * 50)
-    print("🤖 RSS to Discord Bot Starting...")
+    print("💼 VC News to Discord Bot Starting...")
     print(f"⏰ Time: {datetime.utcnow().isoformat()}")
     print("=" * 50)
 
