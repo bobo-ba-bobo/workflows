@@ -35,15 +35,14 @@ jobs:
         run: |
           python podcasts-discord.py
 
-      - name: Commit updated seen episodes
+      - name: Commit and push updated seen episodes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add seen_episodes.json
-          git diff --staged --quiet || git commit -m "Update seen episodes [skip ci]"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          if ! git diff --staged --quiet; then
+            git commit -m "Update seen episodes [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
