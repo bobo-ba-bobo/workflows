@@ -78,7 +78,7 @@ Please provide:
 Format everything with bullet points, be specific and detailed. Write in Korean."""
 
         message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-sonnet-4-5-20250929",
             max_tokens=1024,
             messages=[
                 {"role": "user", "content": prompt}
@@ -141,6 +141,14 @@ def fetch_podcast(podcast_config, seen_episodes):
         # Check latest 5 episodes
         for entry in feed.entries[:5]:
             episode_id = entry.get('id') or entry.get('link', '')
+
+            # Filter by date - only February 2026 onwards
+            pub_date = entry.get('published_parsed') or entry.get('updated_parsed')
+            if pub_date:
+                from datetime import datetime
+                episode_date = datetime(*pub_date[:6])
+                if episode_date.year < 2026 or (episode_date.year == 2026 and episode_date.month < 2):
+                    continue  # Skip episodes before Feb 2026
 
             if episode_id not in seen_episodes[podcast_key]:
                 title = entry.get('title', 'No title')
