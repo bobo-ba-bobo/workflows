@@ -110,7 +110,7 @@ def send_to_discord(message):
         print(f"❌ Error sending to Discord: {e}")
         return False
 
-def is_recent(entry, hours=24):
+def is_recent(entry, hours=12):
     """Check if entry was published within the last N hours"""
     try:
         published = entry.get('published_parsed') or entry.get('updated_parsed')
@@ -147,7 +147,7 @@ def fetch_feed(feed_config, seen_items):
                 print(f"  ⏭️  Already sent: {entry.get('title', '')[:50]}")
                 continue
 
-            if is_recent(entry, hours=24):
+            if is_recent(entry, hours=12):
                 title = entry.get('title', 'No title')
                 description = entry.get('summary', '') or entry.get('description', '')
 
